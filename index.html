@@ -1,0 +1,107 @@
+<html>
+<head>
+    <title>Generator</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+Content:
+<br>
+<textarea id="content" rows=20 cols=50></textarea>
+<br>
+<button id="get">Get H3s</button>
+<div id="h3s">
+
+</div>
+<button id="generate">Generate</button>
+<br>
+<p>
+    Post content with IDs filled in
+</p>
+<textarea id="post" rows=20 cols=50></textarea>
+<p>
+    Menu
+</p>
+<textarea id="result" rows=20 cols=50></textarea>
+<textarea id="template" style="display:none">
+[fin_accordions]
+[fin_accordion title="What's in this guide"]
+[fin_what_is_next title="What's in this guide"]
+<ol>
+%lis
+</ol>
+[/fin_what_is_next]
+[/fin_accordion]
+[/fin_accordions]
+</textarea>
+<script>
+    jQuery(document).ready($ => {
+        const getContent = () => {
+            return $('#content').val();
+        }
+        const getH3s = content => {
+            const regex = /<h3([^>]*)>(.+)<\/h3>/gi;
+            let matches;
+            matches = [...content.matchAll(regex)];
+            return matches;
+        }
+        const replacePostContent = (content, ids, matches) => {
+            let i = 0;
+            for (let match of matches) {
+                let toReplace = match[0];
+                if (toReplace.includes('id=')) {
+                    toReplace = toReplace.replace(/<h3 id=['"][^'"]*['"]/, '<h3');
+                }
+                let afterReplace = toReplace.replace('<h3', `<h3 id="${ids[i]}"`);
+                content = content.replace(toReplace, afterReplace);
+                i++;
+            }
+            return content;
+        }
+        const generateId = str => str.toLowerCase().replace(/^[^a-z]+/, '').replace(/[^a-z]+$/, '').replace(/[^a-z]+/g, '_');
+        let h3s;
+        let h3sMatches;
+        let content;
+        $('#get').click(e => {
+            content = getContent();
+            h3sMatches = getH3s(content);
+            h3s = h3sMatches.map(m => m[2]);
+            let ids = h3sMatches.map(m => {
+                let atts = m[1];
+                if (!atts.length) {
+                    return '';
+                }
+                if (atts.includes('id=')) {
+                    let idMatch = atts.match(/id=['"](.+)['"] ?/);
+                    let id = idMatch[1];
+                    return id;
+                }
+                return generateId(m[2]);
+            });
+
+            $('#h3s').empty();
+            for (let i = 0; i < h3s.length; i++) {
+                let text = h3s[i];
+                let value = ids[i];
+                $('#h3s').append(text + ` <input class="id" name="${i}" value=${value}><br>`);
+            }
+        });
+        $('#generate').click(e => {
+            let template = $('#template').val();
+            let ids = [...$('.id')].map(e => e.value);
+            let rows = [];
+            for (let i = 0; i < h3s.length; i++) {
+                if (ids[i].length) {
+                    rows.push(`<li><a class="scroll" href="#${ids[i]}">${h3s[i]}</a></li>`)
+                }
+            }
+            let result = template.replace('%lis', rows.join("\n"));
+            let postContent = replacePostContent(content, ids, h3sMatches);
+            $('#result').val(result);
+            $('#post').val(postContent);
+        });
+
+    });
+
+</script>
+</body>
+</html>
