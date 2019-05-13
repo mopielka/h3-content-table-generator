@@ -67,10 +67,7 @@ Content:
             h3s = h3sMatches.map(m => m[2]);
             let ids = h3sMatches.map(m => {
                 let atts = m[1];
-                if (!atts.length) {
-                    return '';
-                }
-                if (atts.includes('id=')) {
+                if (atts.length && atts.includes('id=')) {
                     let idMatch = atts.match(/id=['"](.+)['"] ?/);
                     let id = idMatch[1];
                     return id;
@@ -82,7 +79,7 @@ Content:
             for (let i = 0; i < h3s.length; i++) {
                 let text = h3s[i];
                 let value = ids[i];
-                $('#h3s').append(text + ` <input class="id" name="${i}" value=${value}><br>`);
+                $('#h3s').append(text + ` <input class="id" name="${i}" value=${value}><button class="clear" data-name="${i}">Clear</button><br>`);
             }
         });
         $('#generate').click(e => {
@@ -99,7 +96,9 @@ Content:
             $('#result').val(result);
             $('#post').val(postContent);
         });
-
+        $(document).on('click', '.clear', () => {
+            $('input[name="' + $(this).data('id') + '"]').val('');
+        })
     });
 
 </script>
