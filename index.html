@@ -96,8 +96,8 @@ Content:
             $('#result').val(result);
             $('#post').val(postContent);
         });
-        $(document).on('click', '.clear', () => {
-            $('input[name="' + $(this).data('id') + '"]').val('');
+        $(document).on('click', '.clear', e => {
+            $('input[name="' + $(e.target).data('name') + '"]').val('');
         })
     });
 
