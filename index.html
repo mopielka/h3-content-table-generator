@@ -64,6 +64,7 @@ Content:
             return content;
         }
         const generateId = str => str.toLowerCase().replace(/^[^a-z0-9]+/, '').replace(/[^a-z0-9]+$/, '').replace(/[^a-z0-9]+/g, '_');
+        const stripTags = str => str.replace(/<[^>]+>/g, '');
         let h3s;
         let h3sMatches;
         let content;
@@ -94,6 +95,7 @@ Content:
             let rows = [];
             for (let i = 0; i < h3s.length; i++) {
                 if (ids[i].length) {
+                    let h3 = stripTags(h3s[i]);
                     rows.push(`<li><a class="scroll" href="#${ids[i]}">${h3s[i]}</a></li>`)
                 }
             }
