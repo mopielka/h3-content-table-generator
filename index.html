@@ -96,7 +96,7 @@ Content:
             for (let i = 0; i < h3s.length; i++) {
                 if (ids[i].length) {
                     let h3 = stripTags(h3s[i]);
-                    rows.push(`<li><a class="scroll" href="#${ids[i]}">${h3s[i]}</a></li>`)
+                    rows.push(`<li><a class="scroll" href="#${ids[i]}">${h3}</a></li>`)
                 }
             }
             let result = template.replace('%lis', rows.join("\n"));
