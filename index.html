@@ -21,7 +21,11 @@ Content:
 <button id="generate">Generate</button>
 <br>
 <p>
-    Post content with IDs filled in
+    Post content + menu
+</p>
+<textarea id="ready_post" rows=20 cols=50></textarea>
+<p>
+    Just post content with IDs filled in
 </p>
 <textarea id="post" rows=20 cols=50></textarea>
 <p>
@@ -69,6 +73,7 @@ Content:
             }
             return content;
         }
+        const prepareReadyPost = (postContent, menu) => postContent.replace(/<h3/i, menu + "\n<h3");
         const generateId = str => stripTags(str).toLowerCase().replace(/^[^a-z0-9]+/, '').replace(/[^a-z0-9]+$/, '').replace(/[^a-z0-9]+/g, '_');
         const stripTags = str => str.replace(/<[^>]+>/g, '');
         const preserveTemplate = val => {
@@ -119,6 +124,8 @@ Content:
             let postContent = replacePostContent(content, ids, h3sMatches);
             $('#result').val(result);
             $('#post').val(postContent);
+            let readyPost = prepareReadyPost(postContent, result);
+            $('#ready_post').val(readyPost);
         });
         $(document).on('click', '.clear', e => {
             $('input[name="' + $(e.target).data('name') + '"]').val('');
